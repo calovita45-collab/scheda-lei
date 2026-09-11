@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Scheda</title>
+<meta name="theme-color" content="#C2185B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Scheda">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="robots" content="noindex,nofollow">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+</head>
+<body>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Source+Sans+3:wght@400;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap">
+
+<style>
+:root{
+  --paper:#FBF8F9; --surface:#FFFFFF; --surface-2:#F5EFF2;
+  --ink:#1C151A; --ink-soft:#6B5F66; --ink-faint:#9A8D94;
+  --line:#E8DEE3; --line-strong:#D6C7CE;
+  --accent:#C2185B; --accent-ink:#FFFFFF; --accent-soft:#FCEEF4;
+  --hip:#C2185B; --hip-soft:#FCEEF4;
+  --knee:#5B6B7C; --knee-soft:#EEF1F4;
+  --warn:#9A6508; --warn-soft:#FCF3E2;
+  --danger:#AC2A20; --danger-soft:#FBEDEB;
+  --ok:#2F6B4F; --ok-soft:#EAF3EE;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#151015; --surface:#1E181D; --surface-2:#271F26;
+  --ink:#F3EBEF; --ink-soft:#AC9DA6; --ink-faint:#7E7078;
+  --line:#332932; --line-strong:#473A44;
+  --accent:#FF6E9F; --accent-ink:#2A0D18; --accent-soft:#391B29;
+  --hip:#FF6E9F; --hip-soft:#391B29;
+  --knee:#95A6B8; --knee-soft:#242C34;
+  --warn:#E3B463; --warn-soft:#352A17;
+  --danger:#FF8D82; --danger-soft:#3A1F1C;
+  --ok:#7FC7A1; --ok-soft:#1C2F26;
+}}
+:root[data-theme="dark"]{
+  --paper:#151015; --surface:#1E181D; --surface-2:#271F26;
+  --ink:#F3EBEF; --ink-soft:#AC9DA6; --ink-faint:#7E7078;
+  --line:#332932; --line-strong:#473A44;
+  --accent:#FF6E9F; --accent-ink:#2A0D18; --accent-soft:#391B29;
+  --hip:#FF6E9F; --hip-soft:#391B29;
+  --knee:#95A6B8; --knee-soft:#242C34;
+  --warn:#E3B463; --warn-soft:#352A17;
+  --danger:#FF8D82; --danger-soft:#3A1F1C;
+  --ok:#7FC7A1; --ok-soft:#1C2F26;
+}
+
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{
+  background:var(--paper); color:var(--ink); margin:0;
+  font-family:"Source Sans 3",-apple-system,BlinkMacSystemFont,sans-serif;
+  font-size:16px; line-height:1.55; padding-bottom:96px;
+}
+h1,h2,h3{font-family:"Bricolage Grotesque","Source Sans 3",sans-serif;margin:0;letter-spacing:-.015em}
+p{margin:0 0 12px;max-width:62ch}
+p:last-child{margin-bottom:0}
+
+.hd{
+  position:sticky;top:0;z-index:20;background:var(--paper);
+  border-bottom:1px solid var(--line);padding:16px 18px 13px;
+}
+.hd h1{font-size:24px;font-weight:800;line-height:1.1}
+.hd .sub{
+  font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-faint);
+  letter-spacing:.07em;text-transform:uppercase;margin-top:5px
+}
+.wrap{max-width:660px;margin:0 auto;padding:18px 18px 28px}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:17px;margin-bottom:13px}
+.lbl{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;font-weight:600;
+  letter-spacing:.13em;text-transform:uppercase;color:var(--accent);margin-bottom:9px
+}
+.muted{color:var(--ink-soft);font-size:14.5px}
+.tiny{font-size:12.5px;color:var(--ink-faint)}
+
+.flag{border-left:4px solid;border-radius:0 9px 9px 0;padding:15px 17px;margin-bottom:13px}
+.flag.warn{background:var(--warn-soft);border-color:var(--warn)}
+.flag.danger{background:var(--danger-soft);border-color:var(--danger)}
+.flag.ok{background:var(--ok-soft);border-color:var(--ok)}
+.flag .ft{font-family:"IBM Plex Mono",monospace;font-size:10.5px;font-weight:600;
+  letter-spacing:.12em;text-transform:uppercase;display:block;margin-bottom:6px}
+.flag.warn .ft{color:var(--warn)} .flag.danger .ft{color:var(--danger)} .flag.ok .ft{color:var(--ok)}
+.flag p{font-size:14.5px}
+
+button{font-family:inherit;font-size:15px;border:none;border-radius:10px;cursor:pointer;color:var(--ink)}
+.btn{background:var(--accent);color:var(--accent-ink);font-weight:700;padding:15px;width:100%;font-size:16px}
+.btn.sec{background:var(--surface-2);color:var(--ink);border:1px solid var(--line);font-weight:600}
+.btn.sm{width:auto;padding:10px 15px;font-size:14px}
+.linkbtn{display:block;width:100%;background:none;color:var(--ink-faint);font-size:13px;
+  padding:12px;text-decoration:underline;text-underline-offset:3px}
+input,select{
+  background:var(--surface-2);border:1px solid var(--line-strong);color:var(--ink);
+  border-radius:9px;padding:12px;font:inherit;width:100%
+}
+input:focus,select:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+.row{display:flex;gap:9px;align-items:center}
+.grow{flex:1;min-width:0}
+
+/* --- hero giorno --- */
+.hero{
+  background:var(--accent);color:var(--accent-ink);border-radius:14px;
+  padding:18px;margin-bottom:14px
+}
+.hero .hl{font-family:"IBM Plex Mono",monospace;font-size:10.5px;font-weight:600;
+  letter-spacing:.14em;text-transform:uppercase;opacity:.8}
+.hero .hb{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:27px;line-height:1.08;margin:4px 0 5px}
+.hero .hs{font-size:14px;opacity:.92}
+
+.bar{height:7px;background:var(--surface-2);border-radius:9px;overflow:hidden;margin:6px 0 7px}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:9px;transition:width .25s}
+
+/* --- esercizio --- */
+.exname{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:23px;line-height:1.15;margin-bottom:7px}
+.exdose{font-family:"IBM Plex Mono",monospace;font-size:14px;color:var(--ink-soft);margin-bottom:13px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:15px}
+.chip{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;font-weight:600;
+  letter-spacing:.05em;padding:4px 9px;border-radius:3px
+}
+.chip.hip{background:var(--hip-soft);color:var(--hip)}
+.chip.knee{background:var(--knee-soft);color:var(--knee)}
+.chip.sp0{background:var(--ok-soft);color:var(--ok)}
+.chip.sp1{background:var(--warn-soft);color:var(--warn)}
+.chip.core{background:var(--surface-2);color:var(--ink-soft)}
+
+.peso{margin-bottom:15px;color:var(--ink-soft);font-size:14px}
+.peso b{font-family:"Bricolage Grotesque",sans-serif;font-size:42px;font-weight:800;
+  color:var(--accent);line-height:1;letter-spacing:-.03em;display:inline-block;margin-right:3px}
+.ask{font-weight:700;font-size:15.5px;margin-bottom:10px}
+
+.sets{display:flex;flex-direction:column;gap:9px;margin-bottom:4px}
+.set{
+  display:flex;align-items:center;gap:11px;width:100%;text-align:left;
+  background:var(--surface-2);border:1px solid var(--line-strong);
+  padding:17px 15px;border-radius:12px
+}
+.set .n{font-weight:700;font-size:15.5px;flex:0 0 auto}
+.set .v{flex:1;color:var(--ink-faint);font-size:12.5px}
+.set .k{font-size:19px;color:var(--ink-faint);flex:0 0 auto;line-height:1}
+.set.on{background:var(--ok-soft);border-color:var(--ok)}
+.set.on .v{color:var(--ok);font-weight:700;font-size:13.5px;
+  font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}
+.set.on .k{color:var(--ok)}
+
+.setrow{display:flex;gap:7px;align-items:center;margin-bottom:8px}
+.setrow .sl{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-faint);flex:0 0 18px}
+.setrow input{text-align:center;padding:10px 6px}
+.setrow .u{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-faint);flex:0 0 auto}
+
+.note{
+  background:var(--surface-2);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;
+  padding:11px 13px;font-size:14px;color:var(--ink-soft);margin-top:14px;line-height:1.5
+}
+
+/* --- timer --- */
+.timer{
+  position:fixed;left:14px;right:14px;bottom:88px;max-width:632px;margin:0 auto;z-index:30;
+  background:var(--accent);color:var(--accent-ink);border-radius:13px;padding:13px 16px;
+  display:none;align-items:center;justify-content:space-between;
+  box-shadow:0 10px 30px rgba(0,0,0,.28)
+}
+.timer.on{display:flex}
+.timer .tt{font-family:"IBM Plex Mono",monospace;font-size:25px;font-weight:600;font-variant-numeric:tabular-nums}
+.timer .tn{font-size:13px;opacity:.85;font-weight:600}
+.timer button{background:rgba(0,0,0,.2);color:var(--accent-ink);padding:9px 14px;font-weight:700;font-size:13px}
+
+/* --- nav --- */
+.nav{
+  position:fixed;bottom:0;left:0;right:0;z-index:40;display:flex;
+  background:var(--surface);border-top:1px solid var(--line);
+  padding-bottom:env(safe-area-inset-bottom)
+}
+.nav button{
+  flex:1;background:none;color:var(--ink-faint);border-radius:0;
+  padding:11px 2px 13px;font-size:10.5px;font-weight:700;
+  font-family:"IBM Plex Mono",monospace;letter-spacing:.06em;text-transform:uppercase;
+  display:flex;flex-direction:column;align-items:center;gap:5px
+}
+.nav button .ic{
+  width:19px;height:19px;border-radius:50%;border:2.5px solid currentColor;
+  display:block;transition:background .15s
+}
+.nav button.on{color:var(--accent)}
+.nav button.on .ic{background:var(--accent);border-color:var(--accent)}
+
+/* --- segmenti --- */
+.seg{display:flex;gap:6px;margin-bottom:15px;overflow-x:auto;scrollbar-width:none}
+.seg::-webkit-scrollbar{display:none}
+.seg button{
+  flex:1;background:var(--surface);border:1px solid var(--line);color:var(--ink-soft);
+  padding:11px 12px;font-weight:700;font-size:14px;white-space:nowrap
+}
+.seg button.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+
+/* --- liste scheda --- */
+.exrow{padding:14px 0;border-bottom:1px solid var(--line)}
+.exrow:last-child{border-bottom:none}
+.exrt{display:flex;gap:11px;align-items:baseline}
+.exrn{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-faint);flex:0 0 18px}
+.exrname{font-weight:700;flex:1;font-size:16px;line-height:1.3}
+.exrd{font-family:"IBM Plex Mono",monospace;font-size:13px;font-weight:600;white-space:nowrap;
+  font-variant-numeric:tabular-nums}
+.exrc{display:flex;gap:5px;flex-wrap:wrap;margin:8px 0 0 29px}
+
+/* --- macro --- */
+.kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:14px}
+.kpi div{background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:12px 5px;text-align:center}
+.kpi b{display:block;font-family:"Bricolage Grotesque",sans-serif;font-size:20px;font-weight:800;line-height:1.1}
+.kpi span{font-family:"IBM Plex Mono",monospace;font-size:9.5px;color:var(--ink-faint);
+  letter-spacing:.09em;text-transform:uppercase;font-weight:600}
+
+.meal{border-left:3px solid var(--accent);padding-left:13px;margin-bottom:16px}
+.meal .mn{font-weight:700;font-size:15.5px;margin-bottom:3px}
+.meal .mi{font-size:14.5px;color:var(--ink-soft)}
+.meal .mm{font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--accent);
+  font-weight:600;margin-top:5px;letter-spacing:.03em}
+
+table{width:100%;border-collapse:collapse;font-size:14.5px}
+th{font-family:"IBM Plex Mono",monospace;font-size:10px;font-weight:600;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink-faint);text-align:left;
+  padding:0 10px 8px 0;border-bottom:1px solid var(--line-strong)}
+td{padding:11px 10px 11px 0;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:none}
+td.num{font-family:"IBM Plex Mono",monospace;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tablewrap{overflow-x:auto}
+
+ul{margin:0;padding-left:0;list-style:none}
+li{position:relative;padding-left:20px;margin-bottom:9px;font-size:15px;line-height:1.5}
+li:last-child{margin-bottom:0}
+li::before{content:"";position:absolute;left:3px;top:9px;width:6px;height:6px;
+  border-radius:50%;background:var(--accent)}
+li.no::before{content:"×";background:none;left:1px;top:-2px;width:auto;height:auto;
+  color:var(--danger);font-weight:700;font-size:17px}
+
+h2.sec{font-size:21px;font-weight:800;margin:26px 0 4px}
+h2.sec:first-child{margin-top:0}
+.secnote{color:var(--ink-soft);font-size:14.5px;margin-bottom:14px}
+h3.ttl{font-size:17px;font-weight:600;margin-bottom:7px}
+
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="hd"><h1 id="hdT">Oggi</h1><div class="sub" id="hdS"></div></div>
+<div class="wrap" id="app"></div>
+
+<div class="timer" id="tm">
+  <span class="tt" id="tmT">1:30</span>
+  <span class="tn" id="tmN">Riposo</span>
+  <button onclick="stopTimer()">Salta</button>
+</div>
+
+<div class="nav" id="nav"></div>
+
+<script>
+/* ============================ DATI ============================ */
+var SCHEDA = {
+  A:{nome:"Glutei pesante + braccia", sub:"Il giorno che conta di più", durata:"~70 min", ex:[
+    {id:"a1",n:"Hip thrust con bilanciere",s:4,r:"8-10",rec:"2-3 min",t:"hip",sp:0,inc:5,
+     note:"L'esercizio più importante del piano. Mento verso il petto, spingi con i talloni, in alto stringi il sedere per un secondo pieno. Non inarcare la schiena per salire più su: se serve inarcarsi, il peso è troppo."},
+    {id:"a2",n:"Stacco rumeno con manubri",s:3,r:"10-12",rec:"2 min",t:"hip",sp:1,inc:2.5,
+     note:"Le prime tre settimane leggerissimo, conta solo il movimento. Sedere indietro, manubri che sfiorano la coscia, scendi finché senti tirare dietro la gamba e fermati lì. Se tira la schiena invece dei femorali il movimento è sbagliato: torna al pull-through finché non viene."},
+    {id:"a3",n:"Affondo all'indietro con manubri",s:3,r:"10 per gamba",rec:"90 s",t:"hip",sp:0,inc:2,
+     note:"All'indietro e non in avanti: sposta il lavoro dal ginocchio al gluteo e non dà fastidio alle ginocchia. Busto leggermente inclinato in avanti."},
+    {id:"a4",n:"Abduzione anca alla macchina",s:4,r:"15-20",rec:"60 s",t:"hip",sp:0,inc:2.5,
+     note:"Gluteo medio, la parte alta e laterale: è quella che dà la forma tonda vista di dietro. Busto inclinato in AVANTI sulla macchina, non all'indietro."},
+    {id:"a5",n:"Leg curl sdraiata",s:3,r:"12-15",rec:"90 s",t:"knee",sp:0,inc:2.5,
+     note:"Lavora dietro la gamba. Il femorale dà la linea senza ingrossare come il quadricipite, e insieme al gluteo tende la pelle nella zona dove la cellulite si vede di più."},
+    {id:"a6",n:"Curl con manubri",s:3,r:"10-12",rec:"75 s",t:"arm",sp:0,inc:1,
+     note:"Bicipiti. Gomiti fermi attaccati ai fianchi, si muove solo l'avambraccio. Fermata di un secondo in basso, dove il muscolo è allungato."},
+    {id:"a7",n:"Push down alla corda",s:3,r:"12-15",rec:"60 s",t:"arm",sp:0,inc:2.5,
+     note:"Tricipiti, la parte dietro del braccio: è quella che le donne vogliono tonica e che nessuno allena. Gomiti fermi, si aprono solo gli avambracci."},
+    {id:"a8",n:"Dead bug",s:3,r:"8 per lato",rec:"60 s",t:"core",sp:0,inc:0,
+     note:"Schiena schiacciata contro il pavimento per tutto l'esercizio: se si stacca, hai già perso. È questo, non i crunch, che raddrizza il bacino e appiattisce la pancia."},
+    {id:"a9",n:"Plank laterale",s:3,r:"20-30 sec per lato",rec:"45 s",t:"core",sp:0,inc:0,
+     note:"Addominali obliqui, quelli che disegnano i fianchi."}
+  ]},
+  B:{nome:"Parte alta completa", sub:"Dorso, petto, spalle e la schiena", durata:"~70 min", ex:[
+    {id:"b1",n:"Lat machine presa neutra",s:4,r:"10-12",rec:"2 min",t:"back",sp:0,inc:2.5,
+     note:"Dà larghezza alla schiena vista di dietro, e una schiena più larga fa sembrare la vita più stretta. Mai dietro il collo."},
+    {id:"b2",n:"Panca inclinata 30° con manubri",s:3,r:"10-12",rec:"2 min",t:"chest",sp:0,inc:2,
+     note:"Petto. Serve a equilibrare la parte alta e alla postura. Onestà: il pettorale sta SOTTO il seno, che è grasso e ghiandola — allenarlo non alza il seno e non lo rimpicciolisce. Si fa per la forma delle spalle e del torace, non per altro."},
+    {id:"b3",n:"Rematore con un manubrio",s:3,r:"10-12 per braccio",rec:"90 s",t:"back",sp:0,inc:2,
+     note:"Con la mano appoggiata alla panca la colonna non prende carico. Tira verso l'anca, non verso la spalla."},
+    {id:"b4",n:"Military press con manubri, seduta",s:3,r:"10-12",rec:"90 s",t:"back",sp:0,inc:2,
+     note:"Spalle. Presa neutra, gomiti davanti al corpo, non scendere sotto il mento. Mai dietro la testa."},
+    {id:"b5",n:"Iperestensioni a 45° (back extension)",s:3,r:"12-15",rec:"90 s",t:"hip",sp:1,inc:2.5,
+     note:"Il pezzo che cura la schiena, ed è già un esercizio per i glutei. Schiena alta leggermente arrotondata, sali fino alla linea del corpo e NON oltre, stringendo il sedere. Senza peso per le prime 4 settimane. Lento, mai di slancio."},
+    {id:"b6",n:"Alzate laterali",s:3,r:"15-20",rec:"60 s",t:"back",sp:0,inc:1,
+     note:"Spalle più rotonde e un po' più larghe: è l'esercizio che più di tutti fa sembrare la vita stretta."},
+    {id:"b7",n:"Face pull",s:3,r:"15-20",rec:"60 s",t:"back",sp:0,inc:1,
+     note:"Postura e spalla posteriore. Leggero e pulito, mai a strappi. Puoi farlo subito dopo le alzate senza riposare."},
+    {id:"b8",n:"Pallof press",s:3,r:"12 per lato",rec:"60 s",t:"core",sp:0,inc:2.5,
+     note:"Il cavo tira di lato e tu resti dritta. Insegna al core a non far ruotare la colonna: quello che serve quando ti giri con uno scatolone in braccio."},
+    {id:"b9",n:"Camminata con un peso da un lato",s:3,r:"30 metri",rec:"90 s",t:"core",sp:0,inc:2,
+     note:"Un manubrio pesante in una mano sola, cammini dritta senza inclinarti. È il gesto della borsa della spesa: allenarlo è ciò che fa smettere di far male al lavoro."}
+  ]},
+  C:{nome:"Glutei a ripetizioni alte", sub:"Stesso muscolo, stimolo diverso, più braccia e addome", durata:"~70 min", ex:[
+    {id:"c1",n:"Pull-through ai cavi",s:4,r:"12-15",rec:"90 s",t:"hip",sp:0,inc:2.5,
+     note:"Di spalle al cavo basso, la corda passa fra le gambe. Il modo migliore che esista per imparare il movimento d'anca: il cavo tira all'indietro invece di schiacciare in basso, quindi la colonna non prende niente."},
+    {id:"c2",n:"Hip thrust leggero",s:3,r:"15-20",rec:"90 s",t:"hip",sp:0,inc:5,
+     note:"Stesso esercizio del Giorno A ma leggero e a ripetizioni alte. Due stimoli diversi funzionano meglio di uno solo ripetuto."},
+    {id:"c3",n:"Salita sul box o sulla panca",s:3,r:"10 per gamba",rec:"90 s",t:"hip",sp:0,inc:2,
+     note:"Panca ALTA e busto inclinato in avanti: così spinge il gluteo. Panca bassa e busto dritto lavora il quadricipite, cioè il contrario di quello che vogliamo. Non spingere con la gamba che resta a terra."},
+    {id:"c4",n:"Kickback ai cavi",s:3,r:"15 per gamba",rec:"45 s",t:"hip",sp:0,inc:1,
+     note:"Gamba tesa indietro senza inarcare la schiena per arrivare più su. Il movimento è corto: finisce quando la coscia è in linea col corpo."},
+    {id:"c5",n:"Abduzione con elastico o ai cavi",s:3,r:"20 per lato",rec:"45 s",t:"hip",sp:0,inc:1,
+     note:"Gluteo medio di nuovo, con un attrezzo diverso. Elastico sopra le ginocchia, mezzo squat, passi laterali."},
+    {id:"c6",n:"Leg curl",s:3,r:"12-15",rec:"90 s",t:"knee",sp:0,inc:2.5,note:""},
+    {id:"c7",n:"Curl a martello",s:3,r:"12",rec:"60 s",t:"arm",sp:0,inc:1,
+     note:"Bicipiti da un angolo diverso, più il brachiale e l'avambraccio. Palmi che si guardano."},
+    {id:"c8",n:"Estensioni sopra la testa alla corda",s:3,r:"12-15",rec:"60 s",t:"arm",sp:0,inc:2.5,
+     note:"Tricipiti nella parte allungata: è l'angolo che il push down non copre. Gomiti stretti e fermi."},
+    {id:"c9",n:"Crunch inverso",s:3,r:"12-15",rec:"45 s",t:"core",sp:0,inc:0,
+     note:"Sdraiata, porti le ginocchia al petto arrotolando il bacino verso l'alto. A differenza del crunch normale questo allena proprio il movimento che raddrizza il bacino ruotato: è l'unico addominale classico che ti serve."},
+    {id:"c10",n:"Bird dog",s:3,r:"8 per lato",rec:"45 s",t:"core",sp:0,inc:0,
+     note:"A quattro zampe, braccio e gamba opposti che si allungano lentamente. Il bacino non deve inclinarsi di un millimetro. Sembra facile e non lo è."}
+  ]}
+};
+
+var CARDIO = [
+  {n:"8-10.000 passi al giorno",q:"tutti i giorni",
+   c:"È la base, e con il lavoro in negozio ci sei già vicina. Contano più di qualunque sessione di corsa: alzano il dispendio di tutta la giornata senza toccare il recupero."},
+  {n:"Camminata in salita sul tapis roulant",q:"2-3 volte a settimana, 20-25 min",
+   c:"Inclinazione 10-12%, velocità 4-5 km/h, senza tenersi ai manici. La salita fa lavorare il gluteo mentre cammini: è l'unico cardio che va nella stessa direzione dell'allenamento invece che contro. Falla nei giorni senza palestra, oppure dopo i pesi — mai prima."},
+  {n:"Camminata all'aperto",q:"quando puoi",
+   c:"Stessa cosa del tapis roulant, più piacevole. Se c'è una salita, meglio."}
+];
+
+var SCALING = [
+  {w:[1,2],p:50,l:"Riadattamento",d:"Metà serie, carichi leggeri, fermati sempre molto lontano dalla fatica vera. Deve sembrare troppo facile: è voluto. Servono a riprendere i movimenti, non ad allenarsi."},
+  {w:[3,4],p:66,l:"Costruzione",d:"Due terzi delle serie. Inizia a caricare su hip thrust e abduzione. Stacco rumeno e back extension restano leggeri."},
+  {w:[5,8],p:100,l:"Pieno regime",d:"Serie piene, fermati 1-2 ripetizioni prima di non farcela più. Da qui puoi mettere peso sulla back extension."},
+  {w:[9,9],p:50,l:"Scarico",d:"Settimana leggera. Poi si ricomincia dalla settimana 5."}
+];
+
+var QUOTIDIANO = [
+  {n:"Allungamento dei flessori dell'anca",d:"45 secondi per lato",
+   c:"In ginocchio come in un affondo, bacino spinto in avanti chiudendo il sedere. Sono questi muscoli, accorciati dallo stare in piedi e seduti, che tirano il bacino in avanti."},
+  {n:"Ponte a terra",d:"2 serie da 15, lente",
+   c:"Stringi in alto per un secondo. Serve a riaccendere il gluteo, che con il bacino ruotato tende a restare spento."},
+  {n:"Dead bug",d:"2 serie da 8 per lato",c:"Anche nei giorni senza palestra."},
+  {n:"Allungamento del petto sullo stipite",d:"30 secondi per lato",c:"Per le spalle chiuse in avanti."}
+];
+
+var VIETATI = [
+  {n:"Squat pesante con bilanciere",p:"Costruisce la coscia davanti e mette tutto il carico sulla colonna."},
+  {n:"Pressa 45° con carico alto",p:"È un costruttore di quadricipiti."},
+  {n:"Leg extension",p:"Lavora SOLO la coscia davanti. L'esatto opposto dell'obiettivo."},
+  {n:"Affondi camminati pesanti e hack squat",p:"Stesso motivo."},
+  {n:"Stacco da terra completo e good morning",p:"Ottimi esercizi, ma caricano parecchio la colonna: non con una schiena sintomatica."},
+  {n:"Crunch e addominali a raffica",p:"Non tolgono un grammo dalla pancia e rinforzano proprio la postura da correggere."},
+  {n:"Corsa lunga e cardio a raffica",p:"Mangia le energie che servono al gluteo per crescere e rema contro l'obiettivo. Camminare invece va benissimo: vedi la sezione Camminate."},
+  {n:"Creme, fanghi, drenanti e “esercizi anticellulite”",p:"Non funzionano. Nessuno di questi ha mai mostrato un effetto reale sulla cellulite in uno studio serio."}
+];
+
+var LAVORO = [
+  {n:"Sedere indietro, non schiena in giù",c:"Per raccogliere qualcosa il movimento è “porto il sedere verso il muro dietro di me”, non “mi piego in avanti”. La schiena resta dritta e si chiudono le anche."},
+  {n:"Il peso vicino al corpo",c:"Uno scatolone tenuto a 30 cm dal petto pesa sulla schiena il triplo dello stesso scatolone tenuto attaccato."},
+  {n:"Mai girarsi con il peso in mano",c:"Ruotare la colonna sotto carico è il gesto che fa più danni di tutti. Sposta i piedi, non la schiena."}
+];
+
+/* --- alimentazione: 165 cm, 52 kg, 22 anni, in piedi al lavoro + 3 allenamenti --- */
+var TARGET = {kcal:2250, p:105, c:320, f:60};
+var MANTENIMENTO = 2050;
+
+var PASTI = [
+  {n:"Colazione",i:"2 uova · 80 g pane · 30 g formaggio stagionato · 1 frutto",m:"P 28 · C 55 · F 21 · 520 kcal"},
+  {n:"Pranzo",i:"150 g pollo o tacchino · 100 g pasta o riso (da crudo) · verdure · 15 g olio",m:"P 47 · C 82 · F 20 · 700 kcal"},
+  {n:"Spuntino",i:"150 g yogurt greco · 40 g pane o 2 gallette · 1 frutto",m:"P 18 · C 48 · F 5 · 310 kcal"},
+  {n:"Cena",i:"180 g pesce o carne magra · 300 g patate · verdure · 12 g olio",m:"P 42 · C 70 · F 16 · 590 kcal"},
+  {n:"Prima di dormire (facoltativo)",i:"125 g yogurt greco o 150 ml latte",m:"P 12 · C 12 · F 4 · 130 kcal"}
+];
+
+var CIBO_REGOLE = [
+  "Le proteine sono il numero che conta di più: 105 g al giorno, distribuite in 4 pasti da circa 25-30 g l'uno. Sotto quella soglia il gluteo non cresce, per quanto bene ti alleni.",
+  "Nei giorni di allenamento mangia più carboidrati, non meno: sono il carburante delle serie pesanti.",
+  "L'acqua: 2 litri al giorno. Stando in piedi al lavoro se ne perde più di quanto sembri, e disidratata ti alleni peggio.",
+  "Non serve nessun integratore per partire. L'unico con prove solide è la creatina, 3-5 g al giorno, sempre alla stessa ora: funziona anche per le donne e non gonfia."
+];
+
+var ASPETTATIVE = [
+  {q:"Settimane 1-4",c:"La forza risale in fretta: è memoria muscolare, il corpo si ricorda il lavoro di prima. Allo specchio non cambia ancora niente. La schiena però inizia già a dare meno fastidio al lavoro: è il primo segnale che arriva."},
+  {q:"Settimane 5-8",c:"I carichi salgono seduta dopo seduta. Il gluteo è più pieno e più sodo al tatto prima che si veda nelle foto."},
+  {q:"Mese 3-4",c:"Si vede nelle foto di lato. Il bacino è più dritto e la pancia sembra più piatta anche a parità di peso sulla bilancia, solo per la postura."},
+  {q:"Mese 5-8",c:"Si passa alla fase di definizione, e lì viene fuori il lavoro fatto sotto."}
+];
+
+/* ============================ STATO ============================ */
+var K="schedaLei_v1";
+var S=carica();
+function carica(){
+  try{var r=localStorage.getItem(K); if(r) return JSON.parse(r);}catch(e){}
+  return {start:oggiISO(),idx:0,logs:{},done:{},pesi:[],misure:[]};
+}
+function salva(){try{localStorage.setItem(K,JSON.stringify(S));}catch(e){}}
+function oggiISO(){var d=new Date();return d.toISOString().slice(0,10);}
+function dataIT(iso){var a=iso.split("-");return a[2]+"/"+a[1];}
+function chiave(id){return id+"|"+oggiISO();}
+
+function settimana(){
+  var ms=new Date(oggiISO())-new Date(S.start);
+  return Math.max(1,Math.floor(ms/(7*864e5))+1);
+}
+function fase(){
+  var w=settimana();
+  for(var i=0;i<SCALING.length;i++){if(w>=SCALING[i].w[0]&&w<=SCALING[i].w[1])return SCALING[i];}
+  var c=(w-10)%9;
+  return c===8?SCALING[3]:{w:[w,w],p:100,l:"Pieno regime",d:SCALING[2].d};
+}
+function serieScalate(n){return Math.max(1,Math.round(n*fase().p/100));}
+
+var $=function(s){return document.querySelector(s);};
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){
+  return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+
+/* ============================ TIMER ============================ */
+var tmI=null,tmS=0;
+function startTimer(sec,nome){
+  clearInterval(tmI); tmS=sec; $("#tmN").textContent=nome||"Riposo";
+  $("#tm").classList.add("on"); dipingi();
+  tmI=setInterval(function(){tmS--;dipingi();if(tmS<=0){stopTimer();bip();}},1000);
+  function dipingi(){
+    var m=Math.floor(tmS/60),s=tmS%60;
+    $("#tmT").textContent=m+":"+String(s).padStart(2,"0");
+  }
+}
+function stopTimer(){clearInterval(tmI);$("#tm").classList.remove("on");}
+function recSec(r){
+  var m=String(r).match(/(\d+)\s*-?\s*\d*\s*min/);
+  if(m)return parseInt(m[1])*60;
+  var s=String(r).match(/(\d+)\s*s/);
+  return s?parseInt(s[1]):90;
+}
+function bip(){
+  try{
+    var C=window.AudioContext||window.webkitAudioContext; if(!C)return;
+    var a=new C(),o=a.createOscillator(),g=a.createGain();
+    o.connect(g);g.connect(a.destination);o.frequency.value=880;
+    g.gain.setValueAtTime(.25,a.currentTime);
+    g.gain.exponentialRampToValueAtTime(.01,a.currentTime+.5);
+    o.start();o.stop(a.currentTime+.5);
+  }catch(e){}
+  try{navigator.vibrate&&navigator.vibrate([200,100,200]);}catch(e){}
+}
+
+/* ============================ NAVIGAZIONE ============================ */
+var TAB="oggi";
+var TABS=[["oggi","Oggi"],["scheda","Scheda"],["cibo","Cibo"],["prog","Progressi"]];
+function costruisciNav(){
+  $("#nav").innerHTML=TABS.map(function(t){
+    return '<button data-t="'+t[0]+'" class="'+(TAB===t[0]?"on":"")+'">'+
+      '<span class="ic"></span>'+t[1]+'</button>';
+  }).join("");
+  Array.prototype.forEach.call(document.querySelectorAll("#nav button"),function(b){
+    b.onclick=function(){TAB=b.dataset.t;window.scrollTo(0,0);render();};
+  });
+}
+
+var TITOLI={oggi:"Oggi",scheda:"La scheda",cibo:"Alimentazione",prog:"Progressi"};
+function render(){
+  var f=fase();
+  $("#hdT").textContent=TITOLI[TAB];
+  $("#hdS").textContent="Settimana "+settimana()+" · "+f.l+" · "+f.p+"% delle serie";
+  $("#app").innerHTML=({oggi:vOggi,scheda:vScheda,cibo:vCibo,prog:vProg})[TAB]();
+  costruisciNav();
+}
+
+/* ============================ OGGI ============================ */
+function chipDi(e){
+  var h="";
+  if(e.t==="hip")h+='<span class="chip hip">ANCA · GLUTEO</span>';
+  else if(e.t==="knee")h+='<span class="chip knee">GINOCCHIO</span>';
+  else if(e.t==="core")h+='<span class="chip core">ADDOME</span>';
+  else if(e.t==="arm")h+='<span class="chip core">BRACCIA</span>';
+  else if(e.t==="chest")h+='<span class="chip core">PETTO</span>';
+  else h+='<span class="chip core">DORSO · SPALLE</span>';
+  h+=e.sp?'<span class="chip sp1">SCHIENA SOTTO CARICO</span>':'<span class="chip sp0">SCHIENA SCARICA</span>';
+  return h;
+}
+
+function vOggi(){
+  var g=["A","B","C"][S.idx%3], d=SCHEDA[g];
+  var tot=d.ex.length, fatti=0;
+  d.ex.forEach(function(e){if(S.done[chiave(e.id)])fatti++;});
+
+  var h='<div class="hero"><div class="hl">Giorno '+esc(g)+'</div>'+
+    '<div class="hb">'+esc(d.nome)+'</div>'+
+    '<div class="hs">'+esc(d.sub)+' · '+esc(d.durata)+'</div></div>';
+
+  if(fase().p<100){
+    h+='<div class="flag warn"><span class="ft">'+esc(fase().l)+' · '+fase().p+'% delle serie</span>'+
+      '<p style="margin:0">'+esc(fase().d)+'</p></div>';
+  }
+
+  if(fatti>=tot){
+    h+='<div class="flag ok" style="text-align:center;padding:26px">'+
+      '<div style="font-size:38px;line-height:1;margin-bottom:8px">✓</div>'+
+      '<b style="font-size:18px">Seduta finita</b>'+
+      '<p class="muted" style="margin:7px 0 0">Tutti e '+tot+' gli esercizi completati.</p></div>'+
+      '<button class="btn" onclick="cambiaGiorno(1)">Passa al giorno dopo</button>'+
+      '<button class="linkbtn" onclick="riapri(\''+g+'\')">Riapri questa seduta</button>';
+    return h;
+  }
+
+  var i=-1;
+  for(var j=0;j<d.ex.length;j++){if(!S.done[chiave(d.ex[j].id)]){i=j;break;}}
+  var e=d.ex[i], ns=serieScalate(e.s), log=S.logs[chiave(e.id)]||[];
+  var sug=suggerimento(e);
+  var peso=(trovaPeso(log)!==null)?trovaPeso(log):(sug?sug.w:"");
+  var senzaPeso=(e.t==="core"&&e.inc===0);
+
+  h+='<div class="bar"><i style="width:'+Math.round(fatti/tot*100)+'%"></i></div>'+
+     '<div class="tiny" style="margin-bottom:15px">Esercizio '+(i+1)+' di '+tot+'</div>';
+
+  h+='<div class="card" style="padding:19px">'+
+     '<div class="exname">'+esc(e.n)+'</div>'+
+     '<div class="exdose">'+ns+' serie da '+esc(e.r)+' · riposo '+esc(e.rec)+
+     (ns!==e.s?' <span style="color:var(--warn)">(ridotte da '+e.s+')</span>':'')+'</div>'+
+     '<div class="chips">'+chipDi(e)+'</div>';
+
+  if(senzaPeso){
+    h+='<div class="sets">';
+    for(var k=0;k<ns;k++){
+      var sx=log[k]||{};
+      h+='<button class="set '+(sx.ok?"on":"")+'" onclick="tocca(\''+e.id+'\','+k+',\'\','+0+',\''+esc(e.rec)+'\')">'+
+        '<span class="n">Serie '+(k+1)+'</span>'+
+        '<span class="v">'+(sx.ok?"fatta":"tocca quando l\'hai fatta")+'</span>'+
+        '<span class="k">'+(sx.ok?"✓":"○")+'</span></button>';
+    }
+    h+='</div>';
+  } else if(peso===""||peso===null){
+    h+='<div class="ask">Con quanti kg parti?</div>'+
+       '<div class="row" style="margin-bottom:8px">'+
+       '<input id="p-'+e.id+'" type="number" inputmode="decimal" step="0.5" placeholder="kg" '+
+       'style="font-size:19px;text-align:center;padding:14px">'+
+       '<button class="btn sm" style="padding:14px 19px" onclick="impostaPeso(\''+e.id+'\')">OK</button></div>'+
+       '<div class="tiny">Prima volta su questo esercizio: scegli un peso con cui arrivi in fondo alle ripetizioni faticando, ma con la tecnica ancora pulita. Nel dubbio parti più leggera.</div>';
+  } else {
+    h+='<div class="peso"><b>'+esc(String(peso))+'</b>kg</div>';
+    if(sug&&sug.tipo==="su")
+      h+='<div class="flag ok" style="margin-bottom:14px"><span class="ft">Si sale</span>'+
+         '<p style="margin:0">La volta scorsa le hai chiuse tutte. Oggi '+sug.w+' kg.</p></div>';
+    else if(sug&&sug.tipo==="giu")
+      h+='<div class="flag warn" style="margin-bottom:14px"><span class="ft">Si scende</span>'+
+         '<p style="margin:0">La volta scorsa era troppo. Oggi '+sug.w+' kg e ricostruisci.</p></div>';
+
+    var rip=sug?sug.r:primoNum(e.r);
+    h+='<div class="sets">';
+    for(var q=0;q<ns;q++){
+      var sy=log[q]||{};
+      h+='<button class="set '+(sy.ok?"on":"")+'" onclick="tocca(\''+e.id+'\','+q+',\''+esc(String(peso))+'\','+rip+',\''+esc(e.rec)+'\')">'+
+        '<span class="n">Serie '+(q+1)+'</span>'+
+        '<span class="v">'+(sy.ok?esc(String(sy.w))+" kg × "+esc(String(sy.r)):"tocca quando l'hai fatta")+'</span>'+
+        '<span class="k">'+(sy.ok?"✓":"○")+'</span></button>';
+    }
+    h+='</div>';
+    h+='<button class="linkbtn" onclick="apriDett(\''+e.id+'\')">È andata diversamente? Correggi i numeri</button>'+
+       '<div id="d-'+e.id+'" style="display:none">';
+    for(var z=0;z<ns;z++){
+      var sz=log[z]||{};
+      h+='<div class="setrow"><span class="sl">'+(z+1)+'</span>'+
+        '<input class="grow" type="number" inputmode="decimal" step="0.5" placeholder="kg" value="'+(sz.w!=null?esc(String(sz.w)):"")+'" '+
+        'onchange="segna(\''+e.id+'\','+z+',\'w\',this.value)"><span class="u">kg</span>'+
+        '<input class="grow" type="number" inputmode="numeric" placeholder="rip" value="'+(sz.r!=null?esc(String(sz.r)):"")+'" '+
+        'onchange="segna(\''+e.id+'\','+z+',\'r\',this.value)"><span class="u">rip</span></div>';
+    }
+    h+='</div>';
+  }
+
+  if(e.note)h+='<div class="note">'+esc(e.note)+'</div>';
+  h+='</div>';
+
+  var tutte=true;
+  for(var v=0;v<ns;v++){if(!(log[v]||{}).ok)tutte=false;}
+  h+='<button class="btn" onclick="fineEx(\''+e.id+'\')">'+(tutte?"Avanti ›":"Salta e vai avanti ›")+'</button>';
+  if(i>0)h+='<button class="linkbtn" onclick="indietro(\''+d.ex[i-1].id+'\')">‹ Torna all\'esercizio prima</button>';
+  return h;
+}
+
+function trovaPeso(log){
+  for(var i=0;i<log.length;i++){if(log[i]&&log[i].w!=null&&log[i].w!=="")return log[i].w;}
+  return null;
+}
+function primoNum(r){var m=String(r).match(/(\d+)/);return m?+m[1]:10;}
+function intervallo(r){
+  var m=String(r).match(/(\d+)\s*-\s*(\d+)/);
+  if(m)return{min:+m[1],max:+m[2]};
+  var s=String(r).match(/(\d+)/);
+  return s?{min:+s[1],max:+s[1]}:{min:8,max:12};
+}
+function sessionePrec(id){
+  var ks=Object.keys(S.logs).filter(function(k){
+    return k.indexOf(id+"|")===0&&k!==chiave(id);}).sort().reverse();
+  for(var i=0;i<ks.length;i++){
+    var set=S.logs[ks[i]].filter(function(s){return s&&s.w&&s.r;});
+    if(set.length)return{d:ks[i].split("|")[1],set:set};
+  }
+  return null;
+}
+function suggerimento(ex){
+  if(ex.inc===0)return null;
+  var p=sessionePrec(ex.id); if(!p)return null;
+  var r=intervallo(ex.r);
+  var w=Math.max.apply(null,p.set.map(function(s){return parseFloat(s.w)||0;}));
+  var alPeso=p.set.filter(function(s){return parseFloat(s.w)===w;});
+  var rips=alPeso.map(function(s){return parseInt(s.r)||0;});
+  var minR=Math.min.apply(null,rips);
+  var medR=rips.reduce(function(a,b){return a+b;},0)/rips.length;
+  if(minR>=r.max)return{w:+(w+ex.inc).toFixed(1),r:r.min,tipo:"su"};
+  if(medR<r.min-1)return{w:+(w*0.9).toFixed(1),r:r.min,tipo:"giu"};
+  return{w:w,r:Math.min(r.max,Math.max.apply(null,rips)+1),tipo:"pari"};
+}
+
+function impostaPeso(id){
+  var el=document.getElementById("p-"+id); if(!el||!el.value)return;
+  var k=chiave(id); S.logs[k]=S.logs[k]||[];
+  S.logs[k][0]=Object.assign({},S.logs[k][0],{w:String(el.value)});
+  salva(); render();
+}
+function tocca(id,j,w,r,rec){
+  var k=chiave(id); S.logs[k]=S.logs[k]||[];
+  var s=S.logs[k][j]||{};
+  if(s.ok){S.logs[k][j]=Object.assign({},s,{ok:false});salva();render();return;}
+  S.logs[k][j]={w:String(w),r:String(s.r!=null?s.r:r),ok:true};
+  salva(); startTimer(recSec(rec),"Riposo"); render();
+}
+function segna(id,i,f,v){
+  var k=chiave(id); S.logs[k]=S.logs[k]||[]; S.logs[k][i]=S.logs[k][i]||{};
+  S.logs[k][i][f]=v; salva();
+}
+function apriDett(id){
+  var b=document.getElementById("d-"+id);
+  b.style.display=b.style.display==="none"?"block":"none";
+}
+function fineEx(id){S.done[chiave(id)]=true;salva();stopTimer();window.scrollTo(0,0);render();}
+function indietro(id){delete S.done[chiave(id)];salva();window.scrollTo(0,0);render();}
+function cambiaGiorno(n){S.idx=(S.idx+n+3)%3;salva();window.scrollTo(0,0);render();}
+function riapri(g){
+  SCHEDA[g].ex.forEach(function(e){delete S.done[chiave(e.id)];});
+  salva();window.scrollTo(0,0);render();
+}
+
+/* ============================ SCHEDA ============================ */
+var gS="A";
+function vScheda(){
+  var h='<div class="seg">'+["A","B","C"].map(function(g){
+    return '<button class="'+(gS===g?"on":"")+'" onclick="gS=\''+g+'\';render()">Giorno '+g+'</button>';
+  }).join("")+
+  '<button class="'+(gS==="X"?"on":"")+'" onclick="gS=\'X\';render()">Il metodo</button></div>';
+
+  if(gS==="X")return h+metodo();
+
+  var d=SCHEDA[gS];
+  h+='<h2 class="sec">'+esc(d.nome)+'</h2>'+
+     '<p class="secnote">'+esc(d.sub)+' · '+esc(d.durata)+'</p><div class="card">';
+  d.ex.forEach(function(e,i){
+    h+='<div class="exrow"><div class="exrt">'+
+      '<span class="exrn">'+(i+1)+'</span>'+
+      '<span class="exrname">'+esc(e.n)+'</span>'+
+      '<span class="exrd">'+e.s+' × '+esc(e.r)+'</span></div>'+
+      '<div class="exrc">'+chipDi(e)+
+      '<span class="tiny" style="font-family:\'IBM Plex Mono\',monospace">riposo '+esc(e.rec)+'</span></div>'+
+      (e.note?'<div class="note" style="margin-left:29px">'+esc(e.note)+'</div>':'')+
+      '</div>';
+  });
+  return h+'</div>';
+}
+
+function metodo(){
+  var h='<h2 class="sec">Le due cose da capire</h2>';
+  h+='<div class="card"><h3 class="ttl">Il gluteo e la coscia si dividono gli stessi esercizi</h3>'+
+    '<p class="muted">Non esiste un modo per far crescere il gluteo e insieme rimpicciolire la coscia. Ma esiste un modo per farlo crescere <b>senza</b> ingrossare la coscia: scegliere esercizi in cui il movimento parte dall\'anca e non dal ginocchio.</p>'+
+    '<div style="margin-top:14px"><span class="chip hip">ANCA · GLUTEO</span>'+
+    '<p class="muted" style="margin-top:8px">Il bacino si apre e si chiude, il ginocchio resta quasi fermo. Lavora il gluteo, il quadricipite quasi non partecipa. <b>Sono questi che vogliamo.</b></p></div>'+
+    '<div style="margin-top:14px"><span class="chip knee">GINOCCHIO</span>'+
+    '<p class="muted" style="margin-top:8px">Il ginocchio si piega molto sotto carico: costruisce la parte davanti della coscia. <b>Nel piano ce n\'è uno solo</b>, e lavora dietro la gamba.</p></div></div>';
+
+  h+='<div class="card"><h3 class="ttl">La pancia non si sgonfia con gli addominali</h3>'+
+    '<p class="muted">Il grasso non si toglie dal punto che alleni: il dimagrimento localizzato non esiste. La pancia dipende da quanto grasso c\'è e da <b>come sta messo il bacino</b>.</p>'+
+    '<p class="muted">Il tuo bacino è ruotato in avanti più del normale: la schiena si inarca, la pancia viene spinta fuori e sembra più pronunciata di quanto sia. Il lavoro di core del piano serve a questo, ed è lo stesso che serve alla schiena.</p></div>';
+
+  h+='<h2 class="sec">La schiena viene prima di tutto</h2>'+
+    '<p class="secnote">Il dolore quando sollevi al lavoro quasi sempre vuol dire una cosa: la schiena sta facendo il lavoro che dovrebbe fare il gluteo.</p>'+
+    '<div class="flag ok"><span class="ft">Da correggere subito, senza aspettare la palestra</span>'+
+    '<p>Il modo in cui sollevi al lavoro conta più di qualunque esercizio, perché lo ripeti cento volte al giorno.</p><ul style="margin-top:11px">'+
+    LAVORO.map(function(x){return '<li><b>'+esc(x.n)+'.</b> '+esc(x.c)+'</li>';}).join("")+
+    '</ul></div>';
+
+  h+='<div class="flag danger"><span class="ft">Quando serve il medico, non la palestra</span>'+
+    '<p style="margin:0">Se il dolore scende lungo la gamba, dà formicolio o perdita di forza al piede, oppure non passa con il riposo notturno, serve un fisioterapista o un ortopedico <b>prima</b> di caricare. Un dolore da postura migliora in 3-4 settimane con questo lavoro: se non migliora, è un\'altra cosa e va guardata.</p></div>';
+
+  h+='<h2 class="sec">Ogni giorno, 5 minuti</h2>'+
+    '<p class="secnote">Il pezzo che quasi tutti saltano, ed è quello che decide se il bacino si raddrizza davvero.</p><div class="card">';
+  QUOTIDIANO.forEach(function(x){
+    h+='<div class="exrow"><div class="exrt"><span class="exrname">'+esc(x.n)+'</span>'+
+      '<span class="exrd">'+esc(x.d)+'</span></div>'+
+      (x.c?'<p class="muted" style="margin:7px 0 0">'+esc(x.c)+'</p>':'')+'</div>';
+  });
+  h+='</div>';
+
+  h+='<h2 class="sec">Camminate</h2>'+
+    '<p class="secnote">L\'unico cardio che va nella stessa direzione dell\'allenamento invece che contro.</p><div class="card">';
+  CARDIO.forEach(function(x){
+    h+='<div class="exrow"><div class="exrt"><span class="exrname">'+esc(x.n)+'</span>'+
+      '<span class="exrd">'+esc(x.q)+'</span></div>'+
+      '<p class="muted" style="margin:7px 0 0">'+esc(x.c)+'</p></div>';
+  });
+  h+='</div>';
+
+  h+='<h2 class="sec">Sulla cellulite, onestamente</h2>'+
+    '<div class="card">'+
+    '<p class="muted">La cellulite non è grasso normale ed è per questo che non si comporta come il grasso normale. Sotto la pelle ci sono dei tiranti fibrosi che la ancorano in profondità: quando le cellule di grasso fra un tirante e l\'altro si gonfiano, spingono la pelle in fuori mentre i tiranti la tengono giù. Da lì l\'aspetto a buccia d\'arancia. Nelle donne quei tiranti sono disposti in verticale, negli uomini a rete: è il motivo per cui riguarda <b>l\'80-90% delle donne</b>, comprese quelle magre e comprese le atlete.</p>'+
+    '<p class="muted" style="margin-bottom:0"><b>Cosa la migliora davvero, in modo modesto:</b> meno grasso sottocutaneo, e soprattutto più muscolo sotto la pelle, che riempie e tende la superficie. Gluteo e femorali più pieni cambiano l\'aspetto della zona più di qualunque altra cosa. È esattamente quello che fa questo piano — ma il risultato è un miglioramento, non una sparizione, e arriva in mesi.</p></div>'+
+    '<div class="flag danger"><span class="ft">Cosa invece non funziona</span>'+
+    '<p style="margin:0">Creme, fanghi, bendaggi, drenanti, integratori "anticellulite", massaggi e i cosiddetti esercizi mirati: nessuno di questi ha mostrato un effetto reale in uno studio serio. Se un prodotto promette di toglierla, ti sta vendendo qualcosa. Non spendere soldi lì: spendili in cibo buono e in un paio di scarpe comode per camminare.</p></div>';
+
+  h+='<h2 class="sec">Quanto si parte piano</h2>'+
+    '<p class="secnote">I muscoli tornano in fretta dopo due anni di stop, tendini e articolazioni no. Con una schiena che già dà fastidio il margine è ancora più stretto.</p>'+
+    '<div class="card"><div class="tablewrap"><table><thead><tr><th>Settimane</th><th>Serie</th><th>Come</th></tr></thead><tbody>';
+  SCALING.forEach(function(f){
+    h+='<tr><td class="num">'+(f.w[0]===f.w[1]?f.w[0]:f.w[0]+"-"+f.w[1])+'</td>'+
+      '<td class="num">'+(f.p===50?"metà":f.p===66?"2/3":"tutte")+'</td>'+
+      '<td class="muted">'+esc(f.d)+'</td></tr>';
+  });
+  h+='</tbody></table></div>'+
+    '<div class="note" style="margin-top:14px"><b>La regola del carico.</b> Quando chiudi tutte le serie al numero alto di ripetizioni con la tecnica pulita, la volta dopo metti più peso e riparti dal numero basso. L\'app te lo dice da sola. Se il carico è fermo da tre settimane, di solito si dorme poco o si mangia poco.</div></div>';
+
+  h+='<h2 class="sec">Cosa non fare</h2>'+
+    '<p class="secnote">Non sono esercizi cattivi: lavorano contro questi obiettivi precisi.</p><div class="card"><ul>';
+  VIETATI.forEach(function(v){h+='<li class="no"><b>'+esc(v.n)+'</b> — '+esc(v.p)+'</li>';});
+  return h+'</ul></div>';
+}
+
+/* ============================ CIBO ============================ */
+function vCibo(){
+  var h='<div class="kpi">'+
+    '<div><b>'+TARGET.kcal+'</b><span>kcal</span></div>'+
+    '<div><b>'+TARGET.p+'</b><span>prot</span></div>'+
+    '<div><b>'+TARGET.c+'</b><span>carbo</span></div>'+
+    '<div><b>'+TARGET.f+'</b><span>grassi</span></div></div>';
+
+  h+='<div class="flag ok"><span class="ft">Perché questi numeri</span>'+
+    '<p>A 52 kg, 165 cm, 22 anni, in piedi al lavoro e con tre allenamenti a settimana, il tuo mantenimento è intorno alle <b>'+MANTENIMENTO+' kcal</b>. Per far crescere il gluteo serve stare sopra: '+TARGET.kcal+' kcal, cioè circa 200 in più.</p>'+
+    '<p style="margin:0">È un surplus piccolo di proposito. Mangiare molto di più non fa crescere il muscolo più in fretta — fa solo aggiungere grasso che poi va tolto.</p></div>';
+
+  h+='<h2 class="sec">La giornata tipo</h2>'+
+    '<p class="secnote">Non è una gabbia: è un esempio che centra i numeri. Cambia i cibi come vuoi, tenendo le proteine di ogni pasto.</p><div class="card">';
+  PASTI.forEach(function(p){
+    h+='<div class="meal"><div class="mn">'+esc(p.n)+'</div>'+
+      '<div class="mi">'+esc(p.i)+'</div>'+
+      '<div class="mm">'+esc(p.m)+'</div></div>';
+  });
+  h+='</div>';
+
+  h+='<h2 class="sec">Le quattro regole</h2><div class="card"><ul>'+
+    CIBO_REGOLE.map(function(r){return '<li>'+esc(r)+'</li>';}).join("")+'</ul></div>';
+
+  h+='<div class="flag warn"><span class="ft">Un esame del sangue che vale la pena fare</span>'+
+    '<p style="margin:0">Nelle ragazze di 22 anni che si allenano la <b>ferritina bassa</b> è molto comune, e dà esattamente i sintomi che si confondono con lo scarso allenamento: fiato corto, stanchezza, carichi che non salgono. Vale la pena chiedere al medico emocromo, ferritina, vitamina D e tiroide prima di partire. Non è un allarme, è un controllo che evita di sbattere la testa per mesi.</p></div>';
+
+  h+='<h2 class="sec">Cosa aspettarsi</h2><div class="card"><div class="tablewrap"><table><tbody>';
+  ASPETTATIVE.forEach(function(a){
+    h+='<tr><td class="num" style="width:110px">'+esc(a.q)+'</td><td class="muted">'+esc(a.c)+'</td></tr>';
+  });
+  h+='</tbody></table></div></div>';
+
+  h+='<div class="flag warn"><span class="ft">Sul ritmo, senza illusioni</span>'+
+    '<p style="margin:0">Una donna che si allena bene e mangia bene mette circa <b>0,2-0,3 kg di muscolo al mese</b>, e i primi mesi un po\' di più perché è recupero di quello che avevi già. Significa che il gluteo cambia davvero in <b>4-6 mesi</b>, non in sei settimane. Chi promette di più sta vendendo qualcosa.</p></div>';
+  return h;
+}
+
+/* ============================ PROGRESSI ============================ */
+function vProg(){
+  var p=S.misure.slice().sort(function(a,b){return a.d.localeCompare(b.d);});
+  var ult=p[p.length-1], primo=p[0];
+  var h='';
+
+  if(ult){
+    var dg=primo&&p.length>1?(ult.g-primo.g):0;
+    var dv=primo&&p.length>1?(ult.v-primo.v):0;
+    var dk=primo&&p.length>1?(ult.kg-primo.kg):0;
+    h+='<div class="kpi" style="grid-template-columns:repeat(3,1fr)">'+
+      '<div><b>'+ult.kg+'</b><span>kg</span></div>'+
+      '<div><b>'+ult.g+'</b><span>sedere cm</span></div>'+
+      '<div><b>'+ult.v+'</b><span>vita cm</span></div></div>';
+    if(p.length>1){
+      h+='<div class="flag '+(dg>0?"ok":"warn")+'"><span class="ft">Dal primo giorno</span>'+
+        '<p style="margin:0">Sedere <b>'+(dg>=0?"+":"")+dg.toFixed(1)+' cm</b> · '+
+        'vita <b>'+(dv>=0?"+":"")+dv.toFixed(1)+' cm</b> · '+
+        'peso <b>'+(dk>=0?"+":"")+dk.toFixed(1)+' kg</b>.<br>'+
+        'La differenza fra sedere e vita è <b>'+(ult.g-ult.v).toFixed(1)+' cm</b>: è questo il numero che conta, non il peso.</p></div>';
+    }
+  }
+
+  h+='<div class="card"><div class="lbl">Nuova misurazione</div>'+
+    '<p class="muted" style="margin-bottom:13px">Ogni 4 settimane, la mattina a digiuno. Il sedere nel punto più largo, la vita all\'ombelico.</p>'+
+    '<div class="row" style="margin-bottom:9px">'+
+    '<input id="m-kg" type="number" inputmode="decimal" step="0.1" placeholder="peso kg">'+
+    '<input id="m-g" type="number" inputmode="decimal" step="0.5" placeholder="sedere cm"></div>'+
+    '<div class="row" style="margin-bottom:11px">'+
+    '<input id="m-v" type="number" inputmode="decimal" step="0.5" placeholder="vita cm">'+
+    '<button class="btn sm" style="padding:12px 18px" onclick="salvaMisura()">Salva</button></div>'+
+    '<div class="tiny">Fai anche le foto: di fronte, di lato e di spalle, stessa luce e stessa posa. Sono l\'unica prova onesta.</div></div>';
+
+  if(p.length){
+    h+='<h2 class="sec">Storico</h2><div class="card"><div class="tablewrap"><table>'+
+      '<thead><tr><th>Data</th><th>Peso</th><th>Sedere</th><th>Vita</th><th>Diff.</th></tr></thead><tbody>';
+    p.slice().reverse().forEach(function(x){
+      h+='<tr><td class="num">'+dataIT(x.d)+'</td><td class="num">'+x.kg+'</td>'+
+        '<td class="num">'+x.g+'</td><td class="num">'+x.v+'</td>'+
+        '<td class="num" style="color:var(--accent)">'+(x.g-x.v).toFixed(1)+'</td></tr>';
+    });
+    h+='</tbody></table></div></div>';
+  }
+
+  h+='<h2 class="sec">Carichi</h2>';
+  var storia=[];
+  Object.keys(SCHEDA).forEach(function(g){
+    SCHEDA[g].ex.forEach(function(e){
+      if(e.inc===0)return;
+      var pr=sessionePrec(e.id)||(S.logs[chiave(e.id)]&&S.logs[chiave(e.id)].filter(function(s){return s&&s.w;}).length?
+        {d:oggiISO(),set:S.logs[chiave(e.id)].filter(function(s){return s&&s.w;})}:null);
+      if(pr){
+        var w=Math.max.apply(null,pr.set.map(function(s){return parseFloat(s.w)||0;}));
+        storia.push({n:e.n,w:w,d:pr.d});
+      }
+    });
+  });
+  if(storia.length){
+    h+='<div class="card"><div class="tablewrap"><table>'+
+      '<thead><tr><th>Esercizio</th><th>Ultimo carico</th><th>Quando</th></tr></thead><tbody>';
+    storia.forEach(function(x){
+      h+='<tr><td>'+esc(x.n)+'</td><td class="num">'+x.w+' kg</td><td class="num muted">'+dataIT(x.d)+'</td></tr>';
+    });
+    h+='</tbody></table></div></div>';
+  } else {
+    h+='<div class="card"><p class="muted" style="margin:0">Qui compariranno i carichi man mano che segni le serie nella scheda Oggi.</p></div>';
+  }
+
+  h+='<div class="flag ok"><span class="ft">Il numero da guardare</span>'+
+    '<p style="margin:0">Non la bilancia: costruendo muscolo il peso sale mentre l\'aspetto migliora. Guarda la <b>differenza fra sedere e vita</b> e i <b>carichi che salgono</b>. Se quei due numeri crescono, sta funzionando, qualunque cosa dica la bilancia.</p></div>';
+
+  h+='<button class="linkbtn" onclick="azzera()">Cancella tutti i dati salvati</button>';
+  return h;
+}
+
+function salvaMisura(){
+  var kg=parseFloat(document.getElementById("m-kg").value);
+  var g=parseFloat(document.getElementById("m-g").value);
+  var v=parseFloat(document.getElementById("m-v").value);
+  if(!kg||!g||!v)return;
+  S.misure.push({d:oggiISO(),kg:kg,g:g,v:v});
+  salva(); render();
+}
+function azzera(){
+  if(!confirm("Cancello tutto: serie segnate, carichi e misure. Sicura?"))return;
+  S={start:oggiISO(),idx:0,logs:{},done:{},pesi:[],misure:[]};
+  salva(); render();
+}
+
+/* ============================ AVVIO ============================ */
+render();
+</script>
+
+</body>
+</html>
