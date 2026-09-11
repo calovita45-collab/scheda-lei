@@ -545,12 +545,14 @@ function vOggi(){return (S.semplice!==false)?vOggiSemplice():vOggiCompleto();}
 function bloccoRisc(g){
   var extra=RISC_GIORNO[g]||[];
   var n=RISC_BASE.length+extra.length;
-  var h='<div class="exc" style="margin-bottom:13px">'+
-    '<div class="exc-h" onclick="apriEx(\'risc\')">'+
-    '<div class="exc-n" style="background:var(--accent);color:var(--accent-ink)">▲</div>'+
-    '<div class="grow"><div class="exc-t">Riscaldamento — 8 minuti</div>'+
-    '<div class="exc-m">'+n+' cose, sempre prima di iniziare</div></div></div>'+
-    '<div class="exc-b" id="bx-risc" style="display:none">'+
+  var chiuso=S.riscChiuso===true;
+  var h='<div class="exc" style="margin-bottom:13px;border-color:var(--accent)">'+
+    '<div class="exc-h" onclick="toggleRisc()" style="background:var(--accent-soft)">'+
+    '<div class="exc-n" style="background:var(--accent);color:var(--accent-ink)">1°</div>'+
+    '<div class="grow"><div class="exc-t" style="color:var(--accent)">Riscaldamento — 8 minuti</div>'+
+    '<div class="exc-m">'+n+' cose, prima di toccare un peso</div></div>'+
+    '<span style="color:var(--accent);font-size:15px">'+(chiuso?"▸":"▾")+'</span></div>'+
+    '<div class="exc-b" id="bx-risc" style="display:'+(chiuso?"none":"block")+'">'+
     '<p class="muted" style="margin-bottom:12px">Non è facoltativo nel tuo caso: con il bacino ruotato il gluteo parte spento, e se non lo accendi prima il lavoro se lo prende la schiena.</p>';
   h+='<div class="lbl" style="margin-top:4px">Sempre</div>';
   RISC_BASE.forEach(function(x){
@@ -606,6 +608,7 @@ function spuntaSerie(id,i,rec,el){
   S.logs[k][i].ok=!S.logs[k][i].ok; el.classList.toggle("on"); salva();
   if(S.logs[k][i].ok)startTimer(recSec(rec),"Riposo");
 }
+function toggleRisc(){S.riscChiuso=(S.riscChiuso!==true);salva();render();}
 function apriEx(id){
   var b=document.getElementById("bx-"+id);
   b.style.display=(b.style.display==="none")?"block":"none";
