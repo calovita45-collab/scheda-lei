@@ -459,10 +459,27 @@ function oggiISO(){var d=new Date();return d.toISOString().slice(0,10);}
 function dataIT(iso){var a=iso.split("-");return a[2]+"/"+a[1];}
 function chiave(id){return id+"|"+oggiISO();}
 
-function settimana(){
-  var ms=new Date(oggiISO())-new Date(S.start);
-  return Math.max(1,Math.floor(ms/(7*864e5))+1);
+/* La settimana avanza con gli allenamenti fatti, non col calendario:
+   ogni 3 giorni di allenamento completati = settimana successiva.
+   Un giorno conta se almeno meta' degli esercizi di quella scheda sono segnati. */
+function allenamentiFatti(){
+  var perData={};
+  Object.keys(S.done||{}).forEach(function(k){
+    if(!S.done[k])return;
+    var p=k.split("|"); (perData[p[1]]=perData[p[1]]||{})[p[0]]=true;
+  });
+  var n=0;
+  Object.keys(perData).forEach(function(d){
+    ["A","B","C"].forEach(function(g){
+      var ex=SCHEDA[g].ex, c=0;
+      ex.forEach(function(e){if(perData[d][e.id])c++;});
+      if(c>=Math.ceil(ex.length/2))n++;
+    });
+  });
+  return n+(S.extraSedute||0);
 }
+function settimana(){return Math.max(1,Math.floor(allenamentiFatti()/3)+1);}
+function nellaSettimana(){return allenamentiFatti()%3;}
 function fase(){
   var w=settimana();
   for(var i=0;i<SCALING.length;i++){if(w>=SCALING[i].w[0]&&w<=SCALING[i].w[1])return SCALING[i];}
@@ -522,7 +539,7 @@ var TITOLI={oggi:"Oggi",scheda:"La scheda",cibo:"Alimentazione",prog:"Progressi"
 function render(){
   var f=fase();
   $("#hdT").textContent=TITOLI[TAB];
-  $("#hdS").textContent="Settimana "+settimana()+" · "+f.l+" · "+f.p+"% delle serie";
+  $("#hdS").textContent="Settimana "+settimana()+" · allenamento "+(nellaSettimana()+1)+" di 3 · "+f.p+"% delle serie";
   $("#app").innerHTML=({oggi:vOggi,scheda:vScheda,cibo:vCibo,prog:vProg})[TAB]();
   costruisciNav();
 }
@@ -1054,6 +1071,11 @@ function vProg(){
   h+='<div class="flag ok"><span class="ft">Il numero da guardare</span>'+
     '<p style="margin:0">Non la bilancia: costruendo muscolo il peso sale mentre l\'aspetto migliora. Guarda la <b>differenza fra sedere e vita</b> e i <b>carichi che salgono</b>. Se quei due numeri crescono, sta funzionando, qualunque cosa dica la bilancia.</p></div>';
 
+  h+='<div class="card"><h3>Settimana</h3>'+
+    '<p class="muted">Avanza da sola ogni 3 allenamenti completati. Se hai fatto allenamenti senza segnarli, correggi qui.</p>'+
+    '<div class="row" style="gap:8px"><button class="btn sec sm" onclick="spostaSett(-1)">− 1 settimana</button>'+
+    '<b style="flex:1;text-align:center">Settimana '+settimana()+'</b>'+
+    '<button class="btn sec sm" onclick="spostaSett(1)">+ 1 settimana</button></div></div>';
   h+='<button class="linkbtn" onclick="azzera()">Cancella tutti i dati salvati</button>';
   return h;
 }
@@ -1064,6 +1086,10 @@ function salvaMisura(){
   var v=parseFloat(document.getElementById("m-v").value);
   if(!kg||!g||!v)return;
   S.misure.push({d:oggiISO(),kg:kg,g:g,v:v});
+  salva(); render();
+}
+function spostaSett(n){
+  S.extraSedute=Math.max(-allenamentiFatti()+(S.extraSedute||0),(S.extraSedute||0)+n*3);
   salva(); render();
 }
 function azzera(){
