@@ -454,7 +454,57 @@ function carica(){
   try{var r=localStorage.getItem(K); if(r) return JSON.parse(r);}catch(e){}
   return {start:oggiISO(),idx:0,logs:{},done:{},pesi:[],misure:[]};
 }
-function salva(){try{localStorage.setItem(K,JSON.stringify(S));}catch(e){}}
+function salva(){S.agg=Date.now();try{localStorage.setItem(K,JSON.stringify(S));}catch(e){}invia();}
+
+/* ============================ SINCRONIZZAZIONE (Firestore REST) ============================ */
+var FB_URL="https://firestore.googleapis.com/v1/projects/scheda-allenamento-d980b/databases/(default)/documents/schede/";
+var FB_KEY="AIzaSyBG41IaLgoCTUT7qerPCQcLGz11fw91HQI";
+var KS="schedaLei_sync";
+var SY=(function(){try{return JSON.parse(localStorage.getItem(KS))||{};}catch(e){return {};}})();
+var syncStato="";
+function salvaSY(){try{localStorage.setItem(KS,JSON.stringify(SY));}catch(e){}}
+function nuovoCodice(){var c="abcdefghijkmnpqrstuvwxyz23456789",r="";
+  var a=new Uint32Array(24);(window.crypto||{getRandomValues:function(x){for(var i=0;i<x.length;i++)x[i]=Math.random()*4e9;return x;}}).getRandomValues(a);
+  for(var i=0;i<24;i++)r+=c[a[i]%c.length];return r;}
+(function(){ // link condiviso: #c=CODICE (lettura) oppure #c=CODICE&w=1 (anche scrittura)
+  var m=location.hash.match(/c=([a-z0-9]{20,})/);
+  if(m){SY.codice=m[1];SY.sola=!/w=1/.test(location.hash);salvaSY();history.replaceState(null,"",location.pathname);}
+  if(!SY.codice){SY.codice=nuovoCodice();SY.sola=false;salvaSY();}
+})();
+var tInvio=null;
+function invia(){
+  if(SY.sola||!SY.codice)return;
+  clearTimeout(tInvio);
+  tInvio=setTimeout(function(){
+    fetch(FB_URL+SY.codice+"?key="+FB_KEY,{method:"PATCH",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({fields:{dati:{stringValue:JSON.stringify(S)},agg:{integerValue:String(S.agg||Date.now())}}})})
+    .then(function(r){syncStato=r.ok?"Salvato online":"Online non attivo ("+r.status+")";aggStato();})
+    .catch(function(){syncStato="Offline: salvato solo sul telefono";aggStato();});
+  },1500);
+}
+function scarica(){
+  if(!SY.codice)return;
+  fetch(FB_URL+SY.codice+"?key="+FB_KEY).then(function(r){
+    if(r.status===404){syncStato=SY.sola?"Nessun dato ancora":"Pronto";aggStato();if(!SY.sola)invia();return null;}
+    if(!r.ok){syncStato="Online non attivo ("+r.status+")";aggStato();return null;}
+    return r.json();
+  }).then(function(j){
+    if(!j||!j.fields||!j.fields.dati)return;
+    var remoto=JSON.parse(j.fields.dati.stringValue);
+    if(SY.sola||(remoto.agg||0)>(S.agg||0)){S=remoto;try{localStorage.setItem(K,JSON.stringify(S));}catch(e){}render();}
+    else if((S.agg||0)>(remoto.agg||0))invia();
+    syncStato=SY.sola?"Solo lettura · aggiornato":"Sincronizzato";aggStato();
+  }).catch(function(){syncStato="Offline";aggStato();});
+}
+function aggStato(){var e=document.getElementById("syncSt");if(e)e.textContent=syncStato;}
+document.addEventListener("visibilitychange",function(){if(!document.hidden)scarica();});
+function linkPer(scrittura){return location.origin+location.pathname+"#c="+SY.codice+(scrittura?"&w=1":"");}
+function copia(t){try{navigator.clipboard.writeText(t);syncStato="Link copiato";aggStato();}catch(e){prompt("Copia questo link:",t);}}
+function collega(){
+  var v=(document.getElementById("cod-in").value||"").trim().toLowerCase();
+  var m=v.match(/([a-z0-9]{20,})/); if(!m)return;
+  SY.codice=m[1];SY.sola=false;salvaSY();S.agg=0;scarica();
+}
 function oggiISO(){var d=new Date();return d.toISOString().slice(0,10);}
 function dataIT(iso){var a=iso.split("-");return a[2]+"/"+a[1];}
 function chiave(id){return id+"|"+oggiISO();}
@@ -1071,6 +1121,15 @@ function vProg(){
   h+='<div class="flag ok"><span class="ft">Il numero da guardare</span>'+
     '<p style="margin:0">Non la bilancia: costruendo muscolo il peso sale mentre l\'aspetto migliora. Guarda la <b>differenza fra sedere e vita</b> e i <b>carichi che salgono</b>. Se quei due numeri crescono, sta funzionando, qualunque cosa dica la bilancia.</p></div>';
 
+  h+='<div class="card"><h3>Salvataggio online</h3>'+
+    '<p class="muted">'+(SY.sola?'Stai guardando la scheda in <b>sola lettura</b>: le modifiche non vengono salvate online.':'I dati si salvano online da soli, così non si perdono se cambi telefono.')+'</p>'+
+    '<div class="muted" style="margin-bottom:10px">Stato: <b id="syncSt">'+esc(syncStato||"...")+'</b></div>'+
+    (SY.sola?'':'<button class="btn sec sm" style="margin-bottom:8px" onclick="copia(linkPer(false))">Copia link da mandare (solo lettura)</button>'+
+    '<button class="btn sec sm" style="margin-bottom:8px" onclick="copia(linkPer(true))">Copia link per un altro telefono suo</button>')+
+    '<details><summary class="muted">Codice e collegamento manuale</summary>'+
+    '<div class="muted" style="margin:8px 0;word-break:break-all">Codice: <b>'+esc(SY.codice)+'</b></div>'+
+    '<input id="cod-in" placeholder="Incolla un codice o un link">'+
+    '<button class="btn sec sm" style="margin-top:8px" onclick="collega()">Collega</button></details></div>';
   h+='<div class="card"><h3>Settimana</h3>'+
     '<p class="muted">Avanza da sola ogni 3 allenamenti completati. Se hai fatto allenamenti senza segnarli, correggi qui.</p>'+
     '<div class="row" style="gap:8px"><button class="btn sec sm" onclick="spostaSett(-1)">− 1 settimana</button>'+
@@ -1100,6 +1159,7 @@ function azzera(){
 
 /* ============================ AVVIO ============================ */
 render();
+scarica();
 </script>
 
 </body>
