@@ -463,17 +463,12 @@ var KS="schedaLei_sync";
 var SY=(function(){try{return JSON.parse(localStorage.getItem(KS))||{};}catch(e){return {};}})();
 var syncStato="";
 function salvaSY(){try{localStorage.setItem(KS,JSON.stringify(SY));}catch(e){}}
-function nuovoCodice(){var c="abcdefghijkmnpqrstuvwxyz23456789",r="";
-  var a=new Uint32Array(24);(window.crypto||{getRandomValues:function(x){for(var i=0;i<x.length;i++)x[i]=Math.random()*4e9;return x;}}).getRandomValues(a);
-  for(var i=0;i<24;i++)r+=c[a[i]%c.length];return r;}
-(function(){ // link condiviso: #c=CODICE (lettura) oppure #c=CODICE&w=1 (anche scrittura)
-  var m=location.hash.match(/c=([a-z0-9]{20,})/);
-  if(m){SY.codice=m[1];SY.sola=false;salvaSY();S.agg=0;history.replaceState(null,"",location.pathname);}
-  if(!SY.codice){SY.codice=nuovoCodice();SY.sola=false;salvaSY();}
-})();
+var CODICE_SCHEDA="9kqy3vskudpjb8yvmna83gigbqdtsmfy"; // unica scheda condivisa: stesso indirizzo = stessi dati
+SY.codice=CODICE_SCHEDA; SY.sola=false;
 var tInvio=null;
+var scaricato=false;
 function invia(){
-  if(!SY.codice)return;
+  if(!SY.codice||!scaricato)return;
   clearTimeout(tInvio);
   tInvio=setTimeout(function(){
     fetch(FB_URL+SY.codice+"?key="+FB_KEY,{method:"PATCH",headers:{"Content-Type":"application/json"},
@@ -485,26 +480,29 @@ function invia(){
 function scarica(){
   if(!SY.codice)return;
   fetch(FB_URL+SY.codice+"?key="+FB_KEY).then(function(r){
-    if(r.status===404){syncStato="Pronto";aggStato();invia();return null;}
+    if(r.status===404){scaricato=true;syncStato="Pronto";aggStato();if(!vuoto(S))invia();return null;}
     if(!r.ok){syncStato="Online non attivo ("+r.status+")";aggStato();return null;}
     return r.json();
   }).then(function(j){
     if(!j||!j.fields||!j.fields.dati)return;
+    scaricato=true;
     var remoto=JSON.parse(j.fields.dati.stringValue);
-    if((remoto.agg||0)>(S.agg||0)){S=remoto;try{localStorage.setItem(K,JSON.stringify(S));}catch(e){}render();}
-    else if((S.agg||0)>(remoto.agg||0))invia();
+    var lv=vuoto(S), rv=vuoto(remoto);
+    if(rv&&!lv){invia();}
+    else if(lv&&!rv){S=remoto;try{localStorage.setItem(K,JSON.stringify(S));}catch(e){}render();}
+    else if((remoto.agg||0)>(S.agg||0)){S=remoto;try{localStorage.setItem(K,JSON.stringify(S));}catch(e){}render();}
+    else if((S.agg||0)>(remoto.agg||0)){invia();}
     syncStato="Sincronizzato";aggStato();
   }).catch(function(){syncStato="Offline";aggStato();});
 }
+function vuoto(x){
+  if(!x)return true;
+  var n=Object.keys(x.logs||{}).length+Object.keys(x.done||{}).length+(x.misure||[]).length+(x.pesi||[]).length;
+  return n===0;
+}
 function aggStato(){var e=document.getElementById("syncSt");if(e)e.textContent=syncStato;}
 document.addEventListener("visibilitychange",function(){if(!document.hidden)scarica();});
-function linkPer(){return location.origin+location.pathname+"#c="+SY.codice;}
-function copia(t){try{navigator.clipboard.writeText(t);syncStato="Link copiato";aggStato();}catch(e){prompt("Copia questo link:",t);}}
-function collega(){
-  var v=(document.getElementById("cod-in").value||"").trim().toLowerCase();
-  var m=v.match(/([a-z0-9]{20,})/); if(!m)return;
-  SY.codice=m[1];SY.sola=false;salvaSY();S.agg=0;scarica();
-}
+
 function oggiISO(){var d=new Date();return d.toISOString().slice(0,10);}
 function dataIT(iso){var a=iso.split("-");return a[2]+"/"+a[1];}
 function chiave(id){return id+"|"+oggiISO();}
@@ -1122,13 +1120,8 @@ function vProg(){
     '<p style="margin:0">Non la bilancia: costruendo muscolo il peso sale mentre l\'aspetto migliora. Guarda la <b>differenza fra sedere e vita</b> e i <b>carichi che salgono</b>. Se quei due numeri crescono, sta funzionando, qualunque cosa dica la bilancia.</p></div>';
 
   h+='<div class="card"><h3>Salvataggio online</h3>'+
-    '<p class="muted">I dati si salvano online da soli. Manda il link a chi deve usare la stessa scheda: aprendolo vede e modifica gli stessi dati, sempre aggiornati.</p>'+
-    '<div class="muted" style="margin-bottom:10px">Stato: <b id="syncSt">'+esc(syncStato||"...")+'</b></div>'+
-    '<button class="btn sec sm" style="margin-bottom:8px" onclick="copia(linkPer())">Copia link da mandare</button>'+
-    '<details><summary class="muted">Codice e collegamento manuale</summary>'+
-    '<div class="muted" style="margin:8px 0;word-break:break-all">Codice: <b>'+esc(SY.codice)+'</b></div>'+
-    '<input id="cod-in" placeholder="Incolla un codice o un link">'+
-    '<button class="btn sec sm" style="margin-top:8px" onclick="collega()">Collega</button></details></div>';
+    '<p class="muted">Una sola scheda per tutti e due: aprendo questo sito da qualsiasi telefono vedete e modificate gli stessi dati. Si aggiorna ogni volta che riapri l’app.</p>'+
+    '<div class="muted">Stato: <b id="syncSt">'+esc(syncStato||"...")+'</b></div></div>';
   h+='<div class="card"><h3>Settimana</h3>'+
     '<p class="muted">Avanza da sola ogni 3 allenamenti completati. Se hai fatto allenamenti senza segnarli, correggi qui.</p>'+
     '<div class="row" style="gap:8px"><button class="btn sec sm" onclick="spostaSett(-1)">− 1 settimana</button>'+
