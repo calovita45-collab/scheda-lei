@@ -535,6 +535,18 @@ function fase(){
   return c===8?SCALING[3]:{w:[w,w],p:100,l:"Pieno regime",d:SCALING[2].d};
 }
 function serieScalate(n){return Math.max(1,Math.round(n*fase().p/100));}
+/* Nelle settimane ridotte lei puo' aggiungere serie se se la sente, fino al numero pieno. */
+function serieDi(e){return Math.min(e.s,serieScalate(e.s)+((S.piu||{})[chiave(e.id)]||0));}
+function piuSerie(ev,id,sp){
+  if(ev)ev.stopPropagation();
+  if(sp&&!confirm("Questo esercizio carica la schiena. Aggiungi la serie solo se non senti nessun fastidio. Aggiungo?"))return;
+  S.piu=S.piu||{}; S.piu[chiave(id)]=(S.piu[chiave(id)]||0)+1; salva(); render();
+}
+function bottonePiu(e,ns){
+  if(ns>=e.s)return (serieScalate(e.s)<e.s?' <span style="color:var(--ok)">(serie piene)</span>':'');
+  return ' <span style="color:var(--warn)">(ridotte da '+e.s+')</span> '+
+    '<button class="btn sec sm" style="padding:4px 10px;margin-left:4px" data-id="'+e.id+'" data-sp="'+(e.sp?1:0)+'" onclick="piuSerie(event,this.dataset.id,this.dataset.sp===String(1))">+ 1 serie</button>';
+}
 
 var $=function(s){return document.querySelector(s);};
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){
@@ -700,7 +712,7 @@ function vOggiCompleto(){
      '<div class="tiny" style="margin-bottom:14px">'+fatti+' di '+tot+' esercizi completati</div>';
 
   d.ex.forEach(function(e,i){
-    var ns=serieScalate(e.s), fatto=S.done[chiave(e.id)];
+    var ns=serieDi(e), fatto=S.done[chiave(e.id)];
     var log=S.logs[chiave(e.id)]||[], prec=ultimaVolta(e.id), sug=suggerimento(e);
     var senzaPeso=(e.inc===0);
 
@@ -709,7 +721,7 @@ function vOggiCompleto(){
       '<div class="exc-n">'+(fatto?"✓":(i+1))+'</div>'+
       '<div class="grow"><div class="exc-t">'+esc(e.n)+'</div>'+
       '<div class="exc-m">'+ns+' × '+esc(e.r)+' · riposo '+esc(e.rec)+
-      (ns!==e.s?' <span style="color:var(--warn)">(ridotte da '+e.s+')</span>':'')+'</div></div></div>'+
+      bottonePiu(e,ns)+'</div></div></div>'+
       '<div class="exc-b" id="bx-'+e.id+'" style="display:'+(fatto?"none":"block")+'">'+
       '<div class="chips">'+chipDi(e)+'</div>';
 
@@ -783,7 +795,7 @@ function vOggiSemplice(){
 
   var i=-1;
   for(var j=0;j<d.ex.length;j++){if(!S.done[chiave(d.ex[j].id)]){i=j;break;}}
-  var e=d.ex[i], ns=serieScalate(e.s), log=S.logs[chiave(e.id)]||[];
+  var e=d.ex[i], ns=serieDi(e), log=S.logs[chiave(e.id)]||[];
   var sug=suggerimento(e);
   var peso=(trovaPeso(log)!==null)?trovaPeso(log):(sug?sug.w:"");
   var senzaPeso=(e.t==="core"&&e.inc===0);
@@ -794,7 +806,7 @@ function vOggiSemplice(){
   h+='<div class="card" style="padding:19px">'+
      '<div class="exname">'+esc(e.n)+'</div>'+
      '<div class="exdose">'+ns+' serie da '+esc(e.r)+' · riposo '+esc(e.rec)+
-     (ns!==e.s?' <span style="color:var(--warn)">(ridotte da '+e.s+')</span>':'')+'</div>'+
+     bottonePiu(e,ns)+'</div>'+
      '<div class="chips">'+chipDi(e)+'</div>';
 
   if(senzaPeso){
