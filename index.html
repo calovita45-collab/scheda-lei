@@ -468,12 +468,12 @@ function nuovoCodice(){var c="abcdefghijkmnpqrstuvwxyz23456789",r="";
   for(var i=0;i<24;i++)r+=c[a[i]%c.length];return r;}
 (function(){ // link condiviso: #c=CODICE (lettura) oppure #c=CODICE&w=1 (anche scrittura)
   var m=location.hash.match(/c=([a-z0-9]{20,})/);
-  if(m){SY.codice=m[1];SY.sola=!/w=1/.test(location.hash);salvaSY();history.replaceState(null,"",location.pathname);}
+  if(m){SY.codice=m[1];SY.sola=false;salvaSY();S.agg=0;history.replaceState(null,"",location.pathname);}
   if(!SY.codice){SY.codice=nuovoCodice();SY.sola=false;salvaSY();}
 })();
 var tInvio=null;
 function invia(){
-  if(SY.sola||!SY.codice)return;
+  if(!SY.codice)return;
   clearTimeout(tInvio);
   tInvio=setTimeout(function(){
     fetch(FB_URL+SY.codice+"?key="+FB_KEY,{method:"PATCH",headers:{"Content-Type":"application/json"},
@@ -485,20 +485,20 @@ function invia(){
 function scarica(){
   if(!SY.codice)return;
   fetch(FB_URL+SY.codice+"?key="+FB_KEY).then(function(r){
-    if(r.status===404){syncStato=SY.sola?"Nessun dato ancora":"Pronto";aggStato();if(!SY.sola)invia();return null;}
+    if(r.status===404){syncStato="Pronto";aggStato();invia();return null;}
     if(!r.ok){syncStato="Online non attivo ("+r.status+")";aggStato();return null;}
     return r.json();
   }).then(function(j){
     if(!j||!j.fields||!j.fields.dati)return;
     var remoto=JSON.parse(j.fields.dati.stringValue);
-    if(SY.sola||(remoto.agg||0)>(S.agg||0)){S=remoto;try{localStorage.setItem(K,JSON.stringify(S));}catch(e){}render();}
+    if((remoto.agg||0)>(S.agg||0)){S=remoto;try{localStorage.setItem(K,JSON.stringify(S));}catch(e){}render();}
     else if((S.agg||0)>(remoto.agg||0))invia();
-    syncStato=SY.sola?"Solo lettura · aggiornato":"Sincronizzato";aggStato();
+    syncStato="Sincronizzato";aggStato();
   }).catch(function(){syncStato="Offline";aggStato();});
 }
 function aggStato(){var e=document.getElementById("syncSt");if(e)e.textContent=syncStato;}
 document.addEventListener("visibilitychange",function(){if(!document.hidden)scarica();});
-function linkPer(scrittura){return location.origin+location.pathname+"#c="+SY.codice+(scrittura?"&w=1":"");}
+function linkPer(){return location.origin+location.pathname+"#c="+SY.codice;}
 function copia(t){try{navigator.clipboard.writeText(t);syncStato="Link copiato";aggStato();}catch(e){prompt("Copia questo link:",t);}}
 function collega(){
   var v=(document.getElementById("cod-in").value||"").trim().toLowerCase();
@@ -1122,10 +1122,9 @@ function vProg(){
     '<p style="margin:0">Non la bilancia: costruendo muscolo il peso sale mentre l\'aspetto migliora. Guarda la <b>differenza fra sedere e vita</b> e i <b>carichi che salgono</b>. Se quei due numeri crescono, sta funzionando, qualunque cosa dica la bilancia.</p></div>';
 
   h+='<div class="card"><h3>Salvataggio online</h3>'+
-    '<p class="muted">'+(SY.sola?'Stai guardando la scheda in <b>sola lettura</b>: le modifiche non vengono salvate online.':'I dati si salvano online da soli, così non si perdono se cambi telefono.')+'</p>'+
+    '<p class="muted">I dati si salvano online da soli. Manda il link a chi deve usare la stessa scheda: aprendolo vede e modifica gli stessi dati, sempre aggiornati.</p>'+
     '<div class="muted" style="margin-bottom:10px">Stato: <b id="syncSt">'+esc(syncStato||"...")+'</b></div>'+
-    (SY.sola?'':'<button class="btn sec sm" style="margin-bottom:8px" onclick="copia(linkPer(false))">Copia link da mandare (solo lettura)</button>'+
-    '<button class="btn sec sm" style="margin-bottom:8px" onclick="copia(linkPer(true))">Copia link per un altro telefono suo</button>')+
+    '<button class="btn sec sm" style="margin-bottom:8px" onclick="copia(linkPer())">Copia link da mandare</button>'+
     '<details><summary class="muted">Codice e collegamento manuale</summary>'+
     '<div class="muted" style="margin:8px 0;word-break:break-all">Codice: <b>'+esc(SY.codice)+'</b></div>'+
     '<input id="cod-in" placeholder="Incolla un codice o un link">'+
